@@ -1,11 +1,25 @@
 # GrafanaExporter
 
-Utility program for saving batches of chart .PNG images from specific [Grafana](https://grafana.com/grafana/) Dashboard with configured [Grafana Image Renderer](https://grafana.com/grafana/plugins/grafana-image-renderer/) plugin.
++ [Introduction](#introduction)
++ [Command Line Interface](#cli)
++ [XML config](#xml-config)
+
+## Introduction
+
+GrafanaExporter is an utility program for saving batches of chart .PNG images from specific [Grafana](https://grafana.com/grafana/) dashboard with configured [grafana-image-renderer](https://grafana.com/grafana/plugins/grafana-image-renderer/) plugin.
 
 > [RU] 
 > Утилита для сохранения PNG изображений графиков с определеннного дашборда [Grafana](https://grafana.com/grafana/) с настроенным плагином [Grafana Image Renderer](https://grafana.com/grafana/plugins/grafana-image-renderer/). 
 
-### Command Line Interface Usage 
+GrafanaExporter uses `grafana-image-renderer`-provided HTTP API interface to download and save chart images.
+
+Chart download URL example for Grafana with `grafana-image-renderer`:
+
+```
+http://grafana_host:3000/render/d-solo/PS4sLaC7z/sample-dashboard?panelId=1&from=1667380000000&to=1667393000000&var-host=myhost&theme=light&width=1000&height=500&tz=Europe%2FMoscow&timeout=120
+```
+
+## CLI
 
 Usage:
 ```text
@@ -22,7 +36,7 @@ GrafanaExporter.jar [options]
 | --prefix, -p      | Optional     | Prefix to add to all file names specified in XML configuration file                                 |
 | --help, -h        | Optional      | Show usage help                                                                                     |
 
-## Run Examples
+### Run Examples
 
 Relative time:
 ```shell
@@ -39,25 +53,54 @@ YYYY-MM-DD'T'HH24:MI:SS format:
     java -jar GrafanaExporter-{version}.jar --config C:\config.xml -f 2020-01-01T10:00:00 -t 2020-01-01T11:00:00
 ````
 
-### XML config
+## XML config
 
-#### 'Configuration' XMLElement
+### Config example
 
-http://localhost/grafana/d/5FGhJhv4z/sample-sashboard?orgId=1
-http://localhost/grafana/d/5FGhJhv4z/sample-sashboard?viewPanel=1&orgId=1
+```xml
+<Configuration>
+    <Host>http://myhost:3000</Host>
+    <Dashboard>sample-sashboard</Dashboard>
+    <DashboardUID>SSVf6YRWk</DashboardUID>
+    <ApiKey>AQ==</ApiKey>
+    <Destination>C:\out</Destination>
+    <Timezone>Europe/Moscow</Timezone>
+    <Timeout>120</Timeout>
+    <Graph>
+        <PanedId>1</PanedId>
+        <Name>cpu_usage</Name>
+        <Folder>myhost</Folder>
+        <Width>1000</Width>
+        <Height>500</Height>
+        <Var>host=myhost</Var>
+        <Var>theme=light</Var>
+    </Graph>
+    <Graph>
+        <PanedId>2</PanedId>
+        <Name>mem_usage</Name>
+        <Folder>myhost</Folder>
+        <Width>1000</Width>
+        <Height>500</Height>
+        <Var>host=myhost</Var>
+        <Var>theme=light</Var>
+    </Graph>
+</Configuration>
+```
 
-| Option            | Type    | Description                                                                                                     |
-|-------------------|---------|-----------------------------------------------------------------------------------------------------------------|
-| Host    | String  | Grafana base URL. <br/> Example:  http://localhost:3000                                                         |
-| Dashboard     | String  | Dashboard name. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/***sample-sashboard***?orgId=1 |
-| DashboardUID    | String  | Dashboard UID <br/> Example: <span>http://</span>localhost/grafana/d/***5FGhJhv4z***/sample-sashboard?orgId=1   |
-| ApiKey | String  | Grafana API key. See [documentation](https://grafana.com/docs/grafana/latest/administration/api-keys/).         |
-| Destination     | String  | Destination directory to save images. Example: `C:\out`                                                                         |
-| Timezone       | String  | Timezone. Example: `Europe/Moscow`                                                                                |
-| Timeout       | Integer | Timeout for downloads. Example: `120`                                                                             |
-| Graph       | Array   | Array of 'Graph' XMLElement                                                                                     |
+### Root 'Configuration' XMLElement
 
-#### 'Graph' XMLElement
+| Option            | Type    | Description                                                                                                          |
+|-------------------|---------|----------------------------------------------------------------------------------------------------------------------|
+| Host    | String  | Grafana base URL. <br/> Example:  http://localhost:3000                                                              |
+| Dashboard     | String  | Dashboard name. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/***sample-sashboard***?orgId=1      |
+| DashboardUID    | String  | Dashboard unique ID. <br/> Example: <span>http://</span>localhost/grafana/d/***5FGhJhv4z***/sample-sashboard?orgId=1 |
+| ApiKey | String  | Grafana API key. See [documentation](https://grafana.com/docs/grafana/latest/administration/api-keys/).              |
+| Destination     | String  | Destination directory to save images. Example: `C:\out`                                                              |
+| Timezone       | String  | Timezone. Example: `Europe/Moscow`                                                                                   |
+| Timeout       | Integer | Timeout for downloads. Example: `120`                                                                                |
+| Graph       | Array of 'Graph' XMLElement | List of panel specific information.                                                                                  |
+
+### Child 'Graph' XMLElement
 
 | Option            | Type    | Description                                                                                                                        |
 |-------------------|---------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -68,7 +111,7 @@ http://localhost/grafana/d/5FGhJhv4z/sample-sashboard?viewPanel=1&orgId=1
 | Height | Integer | Image height in pixes. Example: `500`                                                                                              |
 | Var     | Array   | Array of Grafana variables to pass in `key=value` format. Examples: `theme=light`, `host=myhost`                                   |
 
-#### XSD
+### XSD
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -100,36 +143,4 @@ http://localhost/grafana/d/5FGhJhv4z/sample-sashboard?viewPanel=1&orgId=1
         </xs:complexType>
     </xs:element>
 </xs:schema>
-```
-
-#### Sample XML config
-
-```xml
-<Configuration>
-    <Host>http://myhost:3000</Host>
-    <Dashboard>sample-sashboard</Dashboard>
-    <DashboardUID>SSVf6YRWk</DashboardUID>
-    <ApiKey>AQ==</ApiKey>
-    <Destination>C:\out</Destination>
-    <Timezone>Europe/Moscow</Timezone>
-    <Timeout>120</Timeout>
-    <Graph>
-        <PanedId>1</PanedId>
-        <Name>cpu_usage</Name>
-        <Folder>myhost</Folder>
-        <Width>1000</Width>
-        <Height>500</Height>
-        <Var>host=myhost</Var>
-        <Var>theme=light</Var>
-    </Graph>
-    <Graph>
-        <PanedId>2</PanedId>
-        <Name>mem_usage</Name>
-        <Folder>myhost</Folder>
-        <Width>1000</Width>
-        <Height>500</Height>
-        <Var>host=myhost</Var>
-        <Var>theme=light</Var>
-    </Graph>
-</Configuration>
 ```
