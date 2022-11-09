@@ -28,27 +28,28 @@ public class Worker implements Callable<Integer> {
     private String name;
     private int result;
 
-    // string date time
-    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, LocalDateTime starttime, LocalDateTime endtime,
+    // datetime parameters
+    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, LocalDateTime from, LocalDateTime to,
            CountDownLatch latch) {
-        final Long startTimeEpoch = starttime.atZone(ZONE).toInstant().toEpochMilli();
-        final Long endTimeEpoch = endtime.atZone(ZONE).toInstant().toEpochMilli();
-        _init(root_config, panel_config, prefix, startTimeEpoch.toString(), endTimeEpoch.toString(), latch);
+        final long startTimeEpoch = from.atZone(ZONE).toInstant().toEpochMilli();
+        final long endTimeEpoch = to.atZone(ZONE).toInstant().toEpochMilli();
+        _init(root_config, panel_config, prefix, Long.toString(startTimeEpoch), Long.toString(endTimeEpoch), latch);
     }
 
-    // epoch millis
-    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, Long starttime, Long endtime,
+    // epoch millis parameters
+    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, Long from, Long to,
            CountDownLatch latch) {
-        _init(root_config, panel_config, prefix, starttime.toString(), endtime.toString(), latch);
+        _init(root_config, panel_config, prefix, from.toString(), to.toString(), latch);
     }
 
-    // relative
-    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, String starttime, String endtime,
+    // relative parameters
+    Worker(RootConfiguration root_config, GraphConfig panel_config, String prefix, String from, String to,
            CountDownLatch latch) {
-        _init(root_config, panel_config, prefix, starttime, endtime, latch);
+        _init(root_config, panel_config, prefix, from, to, latch);
     }
 
-    private void _init(RootConfiguration root_config, GraphConfig panel_config, String prefix, String start, String end,
+    // String parameters
+    private void _init(RootConfiguration root_config, GraphConfig panel_config, String prefix, String from, String to,
                        CountDownLatch latch){
         this.latch = latch;
         this.auth = "Bearer " + root_config.getApikey();
@@ -68,8 +69,8 @@ public class Worker implements Callable<Integer> {
                     .timeout(root_config.getTimeout());
 
             builder = builder
-                    .from(start)
-                    .to(end);
+                    .from(from)
+                    .to(to);
 
             builder = builder.build();
 

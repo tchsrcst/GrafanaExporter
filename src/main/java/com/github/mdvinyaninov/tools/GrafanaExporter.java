@@ -128,9 +128,7 @@ public class GrafanaExporter {
                     break;
             }
 
-            if (w != null) {
-                workers.add(w);
-            }
+            workers.add(w);
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(concurrency);
