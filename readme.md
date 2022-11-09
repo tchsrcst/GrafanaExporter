@@ -89,30 +89,32 @@ YYYY-MM-DD'T'HH24:MI:SS format:
 
 ### Root 'Configuration' XMLElement
 
-| Option            | Type    | Description                                                                                                          |
-|-------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| Host    | String  | Grafana base URL. <br/> Example:  http://localhost:3000                                                              |
-| Dashboard     | String  | Dashboard name. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/***sample-sashboard***?orgId=1      |
-| DashboardUID    | String  | Dashboard unique ID. <br/> Example: <span>http://</span>localhost/grafana/d/***5FGhJhv4z***/sample-sashboard?orgId=1 |
-| ApiKey | String  | Grafana API key. See [documentation](https://grafana.com/docs/grafana/latest/administration/api-keys/).              |
-| Destination     | String  | Destination directory to save images. Example: `C:\out`                                                              |
-| Timezone       | String  | Timezone. Example: `Europe/Moscow`                                                                                   |
-| Timeout       | Integer | Timeout for downloads. Example: `120`                                                                                |
-| Graph       | Array of 'Graph' XMLElement | List of panel specific information.                                                                                  |
+| Option       | Type                        | # of Occurence | Description                                                                                                          |
+|--------------|-----------------------------|----------------|----------------------------------------------------------------------------------------------------------------------|
+| Host         | String                      | {1}            | Grafana base URL. <br/> Example:  http://localhost:3000                                                              |
+| Dashboard    | String                      | {1}            | Dashboard name. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/***sample-sashboard***?orgId=1      |
+| DashboardUID | String                      | {1}            | Dashboard unique ID. <br/> Example: <span>http://</span>localhost/grafana/d/***5FGhJhv4z***/sample-sashboard?orgId=1 |
+| ApiKey       | String                      | {1}            | Grafana API key. See [documentation](https://grafana.com/docs/grafana/latest/administration/api-keys/)               |
+| Destination  | String                      | {1}            | Destination directory to save images. Example: `C:\out`                                                              |
+| Timezone     | String                      | {0, 1}         | Timezone. Example: `Europe/Moscow`                                                                                   |
+| Timeout      | Integer                     | {0, 1}         | Timeout for downloads. Example: `120`                                                                                |
+| Graph        | Array of 'Graph' XMLElement | {0,}           | List of panel specific information.                                                                                  |
 
 ### Child 'Graph' XMLElement
 
-| Option            | Type    | Description                                                                                                                        |
-|-------------------|---------|------------------------------------------------------------------------------------------------------------------------------------|
-| PanedId      | String  | Id of dashboard panel. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/sample-sashboard?viewPanel=***1***&orgId=1 |
-| Name    | String  | Name for chart image file. Example: `cpu_usage_myhost`                                                                             |
-| Folder     | String  | Subfolder to save image to. Example: `myhost`                                                                                      |
-| Width    | Integer | Image width in pixes. Example: `1000`                                                                                              |
-| Height | Integer | Image height in pixes. Example: `500`                                                                                              |
-| Var     | Array   | Array of Grafana variables to pass in `key=value` format. Examples: `theme=light`, `host=myhost`                                   |
+| Option   | Type    | # of Occurence |Description |
+|----------|---------|----------------|-----|
+| PanedId  | String  | {1}            | Id of dashboard panel. <br/> Example: <span>http://</span>localhost/grafana/d/5FGhJhv4z/sample-sashboard?viewPanel=***1***&orgId=1 |
+| Name     | String  | {1}            | Name for chart image file. Example: `cpu_usage_myhost`|
+| Folder   | String  | {0,1}          | Subfolder to save image to. Example: `myhost`|
+| Width    | Integer | {1}            | Image width in pixes. Example: `1000` |
+| Height   | Integer | {1}            | Image height in pixes. Example: `500` |
+| Var      | Array   | {0,}           | Array of Grafana variables to pass in `key=value` format. Examples: `theme=light`, `host=myhost`|
 
-### XSD
+### XMLSchema
 
+<details>
+        <summary>XMLSchema</summary>
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
@@ -130,7 +132,7 @@ YYYY-MM-DD'T'HH24:MI:SS format:
                 <xs:element maxOccurs="unbounded" name="Graph">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="PanedId" type="xs:unsignedByte" />
+                            <xs:element name="PanedId" type="xs:unsignedShort" />
                             <xs:element name="Name" type="xs:string" />
                             <xs:element name="Folder" type="xs:string" />
                             <xs:element name="Width" type="xs:unsignedShort" />
@@ -144,3 +146,4 @@ YYYY-MM-DD'T'HH24:MI:SS format:
     </xs:element>
 </xs:schema>
 ```
+</details>
