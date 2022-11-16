@@ -58,7 +58,7 @@ public class RenderUrlBuilder {
         builder.append("&to=" + to);
         if (vars != null) {
             for (String var : vars) {
-                builder.append("&" + var);
+                builder.append("&" + URLEncoder.encode(var, "UTF-8"));
             }
         }
         builder.append("&width=" + width);
